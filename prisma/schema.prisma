@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 //Comando: npx prisma db push - para criar a tabela no banco de dados
 // Comando: npx prisma db pull - para atualizar o schema.prisma com as tabelas do banco de dados
 model User {
@@ -14,6 +19,17 @@ model User {
   name      String
   email     String   @unique
   status    Boolean  @default(true)
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  posts     Post[]
+}
+
+model Post {
+  id       Int      @id @default(autoincrement())
+  title    String
+  subtitle String?
+  content  String
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id])
 }
