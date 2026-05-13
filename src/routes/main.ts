@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../libs/prisma';
-import { createUser, createUsers } from '../services/user';
+import { createUser, createUsers, getAllUsers } from '../services/user';
+import { get } from 'http';
 
 export const mainRouter = Router();
 
@@ -10,8 +11,14 @@ mainRouter.get('/ping', (req, res) => {
 
 mainRouter.post('/user', async (req, res) => {
     const user = await createUser({
-        name: 'John Doe',
-        email: 'john.doe@example.com'
+        name: 'Wild Bill',
+        email: 'wild.bill@exemple.com',
+        posts: {
+            create: {
+                title: 'Post 1 - Wild Bill',
+                content: 'Content of post 1 - Wild Bill'
+            }
+        }
     });
     if (user) {
         res.status(201).json({ user });
@@ -22,10 +29,10 @@ mainRouter.post('/user', async (req, res) => {
 
 mainRouter.post('/users', async (req, res) => {
     const result = await createUsers([
-        { name: 'Olive', email: 'olive.smith@exemple.com'},
-        { name: 'Adam', email: 'adam.carlsen@exemple.com'},
-        { name: 'Anh', email: 'anh.pham@exemple.com'},
-        { name: 'Holden', email: 'holden.rodriguez@exemple.com'}
+        { name: 'Lavinia', email: 'lavinia@exemple.com'},
+        { name: 'Fernanda', email: 'fernanda@exemple.com'},
+        { name: 'Renato', email: 'renato@exemple.com'},
+        { name: 'Luiz', email: 'luiz@exemple.com'}
     ])
     if (result) {
     res.status(201).json({ ok: true })
@@ -33,3 +40,12 @@ mainRouter.post('/users', async (req, res) => {
         res.status(400).json({ error: 'Error creating users.' })
     }
 })
+
+mainRouter.get('/users', async (req, res) => {
+        const users = await getAllUsers()
+        if (users) {            
+            res.json({ users })
+        }  else {  
+            res.status(500).json({ error: 'Error fetching users.' })
+        }
+    })
